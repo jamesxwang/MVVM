@@ -8,7 +8,6 @@ class Compile {
             this.el.appendChild(fragment);
         }
     }
-    
 
     isElementNode(node) {
         return node.nodeType === 1;
@@ -27,7 +26,7 @@ class Compile {
     }
 
     /**
-     * Element with v-model / v-text
+     * Element with v-model / v-text / v-html etc.
      * @param {*} node 
      */
     compileElement(node) {
@@ -47,9 +46,9 @@ class Compile {
      * @param {*} node 
      */
     compileText(node) {
-        let text = node.textContent;
-        let reg = /\{\{(^}]+)\}\}/g;
-        if (reg.test(text)) {
+        let expr = node.textContent;
+        let reg = /\{\{([^}]+)\}\}/g;
+        if (reg.test(expr)) {
             CompileUtil['text'](node, this.vm, expr);
         }
     }
@@ -75,10 +74,15 @@ CompileUtil = {
             return prev[next];
         }, vm.$data);
     },
+    getTextVal(vm, expr) {
+        return expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
+            return this.getVal(vm, arguments[1]);
+        });
+    },
     text(node, vm, expr) {
-        // let updateFn = this.updater['textUpdater'];
-        // vm.$data[expr]
-        // updateFn && updateFn(node, this.getVal(vm, expr));
+        let updateFn = this.updater['textUpdater'];
+        let value = this.getTextVal(vm, expr);
+        updateFn && updateFn(node, value);
     },
     model(node, vm, expr) {
         let updateFn = this.updater['modelUpdater'];
