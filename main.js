@@ -5,7 +5,7 @@ class MVVM {
 
         if (this.$el) {
             new Observer(this.$data);
-            new Compile(this.$el, this);
+            new Compiler(this.$el, this);
         }
     }
 }

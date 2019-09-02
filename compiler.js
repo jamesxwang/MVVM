@@ -1,4 +1,4 @@
-class Compile {
+class Compiler {
     constructor(el, vm) {
         this.el = this.isElementNode(el) ? el : document.querySelector(el);
         this.vm = vm;
@@ -11,22 +11,10 @@ class Compile {
 
     isElementNode(node) {
         return node.nodeType === 1;
-    }
-
-    compile(fragment) {
-        let childNodes = fragment.childNodes;
-        Array.from(childNodes).forEach(node => {
-            if (this.isElementNode(node)) {
-                this.compileElement(node);
-                this.compile(node);
-            } else {
-                this.compileText(node);
-            }
-        });
-    }
+    }   
 
     /**
-     * Element with v-model / v-text / v-html etc.
+     * Element with v-model
      * @param {*} node 
      */
     compileElement(node) {
@@ -51,6 +39,18 @@ class Compile {
         if (reg.test(expr)) {
             CompileUtil['text'](node, this.vm, expr);
         }
+    }
+
+    compile(fragment) {
+        let childNodes = fragment.childNodes;
+        Array.from(childNodes).forEach(node => {
+            if (this.isElementNode(node)) {
+                this.compileElement(node);
+                this.compile(node);
+            } else {
+                this.compileText(node);
+            }
+        });
     }
 
     isDirective(name) {
@@ -79,13 +79,38 @@ CompileUtil = {
             return this.getVal(vm, arguments[1]);
         });
     },
+    setVal(vm, expr, value) {
+        console.log(value);
+        
+        expr = expr.split('.');
+        console.log(vm.$data);
+        return expr.reduce((prev, next, currentIndex) => {
+            if (currentIndex === expr.length-1) {
+                console.log(prev[next], '=',value);
+                return prev[next] = value;
+            }
+            return prev[next];
+        }, vm.$data);
+    },
     text(node, vm, expr) {
         let updateFn = this.updater['textUpdater'];
         let value = this.getTextVal(vm, expr);
+        expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
+            new Watcher(vm, arguments[1], (newValue) => {
+                updateFn && updateFn(node, this.getTextVal(vm, expr));
+            });
+        });
         updateFn && updateFn(node, value);
     },
     model(node, vm, expr) {
         let updateFn = this.updater['modelUpdater'];
+        new Watcher(vm, expr, (newValue) => {
+            updateFn && updateFn(node, this.getVal(vm, expr));
+        });
+        node.addEventListener('keyup', (e) => {
+            let newValue = e.target.value;
+            this.setVal(vm, expr, newValue);
+        });
         updateFn && updateFn(node, this.getVal(vm, expr));
     },
     updater: {
