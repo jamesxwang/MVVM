@@ -14,7 +14,7 @@ class Compiler {
     }   
 
     /**
-     * Element with v-model
+     * Element with m-model
      * @param {*} node 
      */
     compileElement(node) {
@@ -54,7 +54,7 @@ class Compiler {
     }
 
     isDirective(name) {
-        return name.includes('v-');
+        return name.includes('m-');
     }
 
     nodeToFragment(el) {
@@ -80,13 +80,9 @@ CompileUtil = {
         });
     },
     setVal(vm, expr, value) {
-        console.log(value);
-        
         expr = expr.split('.');
-        console.log(vm.$data);
         return expr.reduce((prev, next, currentIndex) => {
             if (currentIndex === expr.length-1) {
-                console.log(prev[next], '=',value);
                 return prev[next] = value;
             }
             return prev[next];

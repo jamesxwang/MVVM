@@ -19,12 +19,10 @@ class Observer {
             enumerable: true,
             configurable: true,
             get() {
-                // console.log(value);
                 Dep.target && dep.addSubscribe(Dep.target);
                 return value;
             },
             set(newValue) {
-                console.log(newValue)
                 if (newValue != value) {
                     // observe if is an object
                     that.observe(newValue);
@@ -33,17 +31,5 @@ class Observer {
                 }
             }
         });
-    }
-}
-
-class Dep {
-    constructor() {
-        this.subscribe = [];
-    }
-    addSubscribe(watcher) {
-        this.subscribe.push(watcher);
-    }
-    notify() {
-        this.subscribe.forEach(watcher => watcher.update());
     }
 }

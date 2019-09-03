@@ -20,8 +20,6 @@ class Watcher {
     update() {
         let newValue = this.getVal(this.vm, this.expr);
         let oldValue = this.value;
-        console.log(newValue, oldValue);
-        
         if (newValue != oldValue) {
             this.cb(newValue);
         }
