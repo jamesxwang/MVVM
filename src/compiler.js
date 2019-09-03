@@ -67,7 +67,7 @@ class Compiler {
     }
 }
 
-CompileUtil = {
+const CompileUtil = {
     getVal(vm, expr) {
         expr = expr.split('.');
         return expr.reduce((prev, next) => {
@@ -75,8 +75,8 @@ CompileUtil = {
         }, vm.$data);
     },
     getTextVal(vm, expr) {
-        return expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
-            return this.getVal(vm, arguments[1]);
+        return expr.replace(/\{\{([^}]+)\}\}/g, (...args) => {
+            return this.getVal(vm, args[1]);
         });
     },
     setVal(vm, expr, value) {
@@ -91,8 +91,8 @@ CompileUtil = {
     text(node, vm, expr) {
         let updateFn = this.updater['textUpdater'];
         let value = this.getTextVal(vm, expr);
-        expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
-            new Watcher(vm, arguments[1], (newValue) => {
+        expr.replace(/\{\{([^}]+)\}\}/g, (...args) => {
+            new Watcher(vm, args[1], (newValue) => {
                 updateFn && updateFn(node, this.getTextVal(vm, expr));
             });
         });
