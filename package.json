@@ -1,0 +1,23 @@
+{
+  "name": "mvvm",
+  "version": "1.0.0",
+  "description": "A mini MVVM mock-up",
+  "main": "index.js",
+  "dependencies": {
+    "gulp": "^4.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cn-wx/MVVM.git"
+  },
+  "author": "James Wang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cn-wx/MVVM/issues"
+  },
+  "homepage": "https://github.com/cn-wx/MVVM#readme"
+}
